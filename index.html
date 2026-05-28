@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Memory Kaartjes</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header>
+    <h1>🃏 Memory Kaartjes</h1>
+    <p>Klik op een kaartje om een vraag of video te bekijken</p>
+  </header>
+
+  <main>
+    <div id="card-grid"></div>
+  </main>
+
+  <!-- Overlay + Modal -->
+  <div id="overlay">
+    <div id="modal" role="dialog" aria-modal="true">
+      <button id="modal-close" aria-label="Sluiten">✕</button>
+      <div id="modal-content"></div>
+    </div>
+  </div>
+
+  <script src="cards.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
