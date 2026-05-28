@@ -1,79 +1,54 @@
-// Voeg hier je eigen kaartjes toe!
-// type: "question" of "video"
-// Voor vragen: geef een "question" en optioneel een "answer"
-// Voor video's: geef een YouTube video-ID (bijv. "dQw4w9WgXcQ")
+// Voeg hier je eigen kaartjes toe.
+// type: "question"  → geef een "question" tekst
+// type: "video"     → geef een YouTube "videoId" (het deel na ?v= in de URL)
 
 const CARDS = [
   {
     type: "question",
-    label: "Vraag 1",
-    question: "Wat is de hoofdstad van Nederland?",
-    answer: "Amsterdam"
+    question: "Wat is de hoofdstad van Nederland?"
   },
   {
     type: "question",
-    label: "Vraag 2",
-    question: "Hoeveel provincies heeft Nederland?",
-    answer: "12 provincies"
-  },
-  {
-    type: "question",
-    label: "Vraag 3",
-    question: "Welke rivier stroomt door Amsterdam?",
-    answer: "De Amstel"
+    question: "Hoeveel provincies heeft Nederland?"
   },
   {
     type: "video",
-    label: "Video 1",
-    videoId: "dQw4w9WgXcQ",
-    title: "Voorbeeld video"
+    videoId: "dQw4w9WgXcQ"
   },
   {
     type: "question",
-    label: "Vraag 4",
-    question: "In welk jaar werd Nederland lid van de EU?",
-    answer: "1957 (als oprichter)"
+    question: "Welke rivier stroomt door Amsterdam?"
   },
   {
     type: "question",
-    label: "Vraag 5",
-    question: "Wat is het nationale symbool van Nederland?",
-    answer: "De tulp"
+    question: "In welk jaar werd Nederland lid van de EU?"
   },
   {
     type: "video",
-    label: "Video 2",
-    videoId: "3JZ_D3ELwOQ",
-    title: "Nog een video"
+    videoId: "3JZ_D3ELwOQ"
   },
   {
     type: "question",
-    label: "Vraag 6",
-    question: "Welke kleur heeft de Nederlandse vlag?",
-    answer: "Rood, wit en blauw"
+    question: "Welke kleur heeft de Nederlandse vlag?"
   },
   {
     type: "question",
-    label: "Vraag 7",
-    question: "Wat is de langste rivier van Nederland?",
-    answer: "De Rijn"
+    question: "Wat is de langste rivier van Nederland?"
   },
   {
     type: "question",
-    label: "Vraag 8",
-    question: "Welk land grenst ten zuiden aan Nederland?",
-    answer: "België"
+    question: "Welk land grenst ten zuiden aan Nederland?"
   },
   {
     type: "video",
-    label: "Video 3",
-    videoId: "oHg5SJYRHA0",
-    title: "Derde video"
+    videoId: "oHg5SJYRHA0"
   },
   {
     type: "question",
-    label: "Vraag 9",
-    question: "Wat is de munteenheid van Nederland?",
-    answer: "De euro (€)"
+    question: "Wat is de munteenheid van Nederland?"
+  },
+  {
+    type: "question",
+    question: "Welk nationaal symbool hoort bij Nederland?"
   }
 ];
