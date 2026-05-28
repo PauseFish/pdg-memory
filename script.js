@@ -55,7 +55,13 @@ const wrappers = CARDS.map((card) => {
 
   wrapper.innerHTML = `
     <div class="card-inner">
-      <div class="card-front"></div>
+      <div class="card-front">
+        <span class="cf-corner cf-tl">PDG</span>
+        <div class="cf-oval">
+          <span class="cf-label">PDG<em>memories</em></span>
+        </div>
+        <span class="cf-corner cf-br">PDG</span>
+      </div>
       <div class="card-back-face"></div>
     </div>
   `;
