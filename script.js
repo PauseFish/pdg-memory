@@ -1,20 +1,57 @@
 const grid    = document.getElementById('card-grid');
 const overlay = document.getElementById('overlay');
 
-let activeWrapper = null;
-let placeholder   = null;
+const CARD_W = 110;
+const CARD_H = 154;
 
-// ── Build scattered cards ────────────────────────
-CARDS.forEach((card) => {
+let activeWrapper = null;
+
+// ── Layout: divide viewport into a grid, place each card
+//    at a random position within its cell ──────────────
+function layoutCards(wrappers) {
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+
+  // Number of columns that comfortably fit
+  const cols = Math.max(2, Math.floor(vw / (CARD_W * 1.7)));
+  const rows = Math.ceil(wrappers.length / cols);
+
+  // Cells cover the full viewport (or more if many cards)
+  const cellW = vw / cols;
+  const cellH = Math.max(CARD_H + 40, vh / rows);
+
+  grid.style.height = `${Math.max(vh, rows * cellH)}px`;
+
+  wrappers.forEach((wrapper, i) => {
+    const col = i % cols;
+    const row = Math.floor(i / cols);
+
+    // Random position within the cell, with a small guard margin
+    const margin = 12;
+    const maxX = Math.max(0, cellW - CARD_W - margin * 2);
+    const maxY = Math.max(0, cellH - CARD_H - margin * 2);
+
+    const x = col * cellW + margin + Math.random() * maxX;
+    const y = row * cellH + margin + Math.random() * maxY;
+
+    wrapper.style.left = `${x}px`;
+    wrapper.style.top  = `${y}px`;
+
+    // Store absolute coords for the return animation
+    wrapper._absLeft = x;
+    wrapper._absTop  = y;
+  });
+}
+
+// ── Build cards ──────────────────────────────────
+const wrappers = CARDS.map((card) => {
   const wrapper = document.createElement('div');
   wrapper.className = 'card-wrapper';
 
-  // Random rotation + slight vertical scatter
-  const rot = +(Math.random() * 28 - 14).toFixed(2);   // -14 … +14 deg
-  const dy  = +(Math.random() * 20 - 10).toFixed(2);   // -10 … +10 px
+  // Random rotation
+  const rot = +(Math.random() * 28 - 14).toFixed(2);
   wrapper._rot = rot;
-  wrapper._dy  = dy;
-  wrapper.style.transform = `rotate(${rot}deg) translateY(${dy}px)`;
+  wrapper.style.transform = `rotate(${rot}deg)`;
 
   wrapper.innerHTML = `
     <div class="card-inner">
@@ -28,18 +65,19 @@ CARDS.forEach((card) => {
   });
 
   grid.appendChild(wrapper);
+  return wrapper;
 });
+
+layoutCards(wrappers);
+window.addEventListener('resize', () => layoutCards(wrappers));
 
 // ── Open card ────────────────────────────────────
 function openCard(wrapper, card) {
   const rect  = wrapper.getBoundingClientRect();
   const inner = wrapper.querySelector('.card-inner');
 
-  // Keep the grid space with an invisible placeholder
-  placeholder = document.createElement('div');
-  placeholder.style.cssText =
-    `width:${rect.width}px;height:${rect.height}px;flex-shrink:0;visibility:hidden;`;
-  wrapper.parentNode.insertBefore(placeholder, wrapper);
+  // Store viewport coords at open time (used for return animation)
+  wrapper._origViewport = { left: rect.left, top: rect.top };
 
   // Fill back face
   const backFace = wrapper.querySelector('.card-back-face');
@@ -49,53 +87,44 @@ function openCard(wrapper, card) {
     closeCard();
   });
 
-  // Switch to fixed at the card's current viewport position
-  wrapper.classList.add('is-active');
+  // Snap to fixed at current viewport position (no visual jump)
   inner.style.transition = 'none';
-
+  wrapper.classList.add('is-active');
   Object.assign(wrapper.style, {
-    position:  'fixed',
-    left:      `${rect.left}px`,
-    top:       `${rect.top}px`,
-    width:     `${rect.width}px`,
-    height:    `${rect.height}px`,
-    margin:    '0',
-    zIndex:    '200',
-    transform: `rotate(${wrapper._rot}deg) translateY(0px)`,
+    position:   'fixed',
+    left:       `${rect.left}px`,
+    top:        `${rect.top}px`,
+    width:      `${CARD_W}px`,
+    height:     `${CARD_H}px`,
+    zIndex:     '200',
+    transform:  `rotate(${wrapper._rot}deg)`,
     transition: 'none',
   });
 
   overlay.classList.add('active');
   activeWrapper = wrapper;
 
-  // Target dimensions
+  // Target size at center
   const isVideo = card.type === 'video';
   const vw = window.innerWidth;
   const vh = window.innerHeight;
   const targetW = Math.min(isVideo ? 520 : 440, vw * 0.88);
-  const targetH = isVideo
-    ? Math.round(targetW * 9 / 16)
-    : Math.min(300, vh * 0.62);
-  const targetL = (vw - targetW) / 2;
-  const targetT = (vh - targetH) / 2;
+  const targetH = isVideo ? Math.round(targetW * 9 / 16) : Math.min(300, vh * 0.62);
 
-  // Animate: fly to center, straighten, grow — then flip
+  // Fly to center, straighten, grow → then flip
   requestAnimationFrame(() => requestAnimationFrame(() => {
-    const move = 'cubic-bezier(.4,0,.2,1)';
+    const ease = 'cubic-bezier(.4,0,.2,1)';
     wrapper.style.transition = [
-      `left .5s ${move}`,
-      `top .5s ${move}`,
-      `width .5s ${move}`,
-      `height .5s ${move}`,
-      `transform .5s ${move}`,
+      `left .5s ${ease}`, `top .5s ${ease}`,
+      `width .5s ${ease}`, `height .5s ${ease}`,
+      `transform .5s ${ease}`,
     ].join(',');
-    wrapper.style.left      = `${targetL}px`;
-    wrapper.style.top       = `${targetT}px`;
+    wrapper.style.left      = `${(vw - targetW) / 2}px`;
+    wrapper.style.top       = `${(vh - targetH) / 2}px`;
     wrapper.style.width     = `${targetW}px`;
     wrapper.style.height    = `${targetH}px`;
     wrapper.style.transform = 'rotate(0deg)';
 
-    // Flip starts just after movement begins
     inner.style.transition = `transform .55s cubic-bezier(.4,0,.2,1) .08s`;
     inner.style.transform  = 'rotateY(180deg)';
   }));
@@ -103,46 +132,50 @@ function openCard(wrapper, card) {
 
 // ── Close card ───────────────────────────────────
 function closeCard() {
-  if (!activeWrapper || !placeholder) return;
+  if (!activeWrapper) return;
 
   const wrapper = activeWrapper;
   const inner   = wrapper.querySelector('.card-inner');
 
-  // Stop any playing video
+  // Stop video
   const iframe = inner.querySelector('iframe');
   if (iframe) iframe.src = '';
 
-  // Return to original position (read from placeholder)
-  const pr   = placeholder.getBoundingClientRect();
-  const move = 'cubic-bezier(.4,0,.2,1)';
+  // Fly back to original viewport position and shrink
+  const { left, top } = wrapper._origViewport;
+  const ease = 'cubic-bezier(.4,0,.2,1)';
   wrapper.style.transition = [
-    `left .45s ${move}`,
-    `top .45s ${move}`,
-    `width .45s ${move}`,
-    `height .45s ${move}`,
-    `transform .45s ${move}`,
+    `left .45s ${ease}`, `top .45s ${ease}`,
+    `width .45s ${ease}`, `height .45s ${ease}`,
+    `transform .45s ${ease}`,
   ].join(',');
-  wrapper.style.left      = `${pr.left}px`;
-  wrapper.style.top       = `${pr.top}px`;
-  wrapper.style.width     = `${pr.width}px`;
-  wrapper.style.height    = `${pr.height}px`;
+  wrapper.style.left      = `${left}px`;
+  wrapper.style.top       = `${top}px`;
+  wrapper.style.width     = `${CARD_W}px`;
+  wrapper.style.height    = `${CARD_H}px`;
   wrapper.style.transform = `rotate(${wrapper._rot}deg)`;
 
-  inner.style.transition = `transform .4s ${move}`;
+  inner.style.transition = `transform .4s ${ease}`;
   inner.style.transform  = 'rotateY(0deg)';
 
   overlay.classList.remove('active');
 
-  // After animation: restore card to normal flow
+  // Switch back to absolute positioning in the layout
   setTimeout(() => {
     wrapper.classList.remove('is-active');
-    wrapper.style.cssText  = '';           // clear all inline
-    wrapper.style.transform = `rotate(${wrapper._rot}deg) translateY(${wrapper._dy}px)`;
-    inner.style.transition  = '';
-    inner.style.transform   = '';
+    Object.assign(wrapper.style, {
+      position:   'absolute',
+      left:       `${wrapper._absLeft}px`,
+      top:        `${wrapper._absTop}px`,
+      width:      `${CARD_W}px`,
+      height:     `${CARD_H}px`,
+      zIndex:     '',
+      transition: '',
+      transform:  `rotate(${wrapper._rot}deg)`,
+    });
+    inner.style.transition = '';
+    inner.style.transform  = '';
     wrapper.querySelector('.card-back-face').innerHTML = '';
-    placeholder.remove();
-    placeholder   = null;
     activeWrapper = null;
   }, 460);
 }
@@ -174,8 +207,6 @@ document.addEventListener('keydown', (e) => {
 
 function escapeHtml(str) {
   return String(str)
-    .replace(/&/g,  '&amp;')
-    .replace(/</g,  '&lt;')
-    .replace(/>/g,  '&gt;')
-    .replace(/"/g,  '&quot;');
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }

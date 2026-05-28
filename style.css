@@ -20,25 +20,21 @@ body {
 /* ── Card grid ─────────────────────────────────── */
 
 #card-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 28px;
-  justify-content: center;
-  align-content: flex-start;
-  padding: 64px 48px 80px;
+  position: relative;
+  width: 100%;
+  /* height set by JS to match calculated layout */
   min-height: 100vh;
 }
 
 /* ── Card wrapper ──────────────────────────────── */
 
 .card-wrapper {
-  /* size and rotation are set inline by JS */
+  /* position, size and rotation set inline by JS */
+  position: absolute;
   width: 110px;
   height: 154px;
-  flex-shrink: 0;
   cursor: pointer;
   perspective: 900px;
-  position: relative;
 }
 
 /* ── Card inner (3-D flip stage) ───────────────── */
