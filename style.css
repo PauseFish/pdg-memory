@@ -71,12 +71,10 @@ body {
 .card-front {
   background: linear-gradient(160deg, #e8192c 0%, #c0111f 100%);
   border: 3px solid #fff;
-  border-radius: 10px;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
 }
 
 /* Subtiele stip-textuur op de achtergrond */
