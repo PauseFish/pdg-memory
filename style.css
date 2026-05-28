@@ -69,9 +69,10 @@ body {
 /* ── Front face — UNO-stijl ────────────────────── */
 
 .card-front {
+  position: absolute;
+  inset: 0;
   background: linear-gradient(160deg, #e8192c 0%, #c0111f 100%);
   border: 3px solid #fff;
-  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
