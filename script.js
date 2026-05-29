@@ -1,39 +1,93 @@
 const grid    = document.getElementById('card-grid');
 const overlay = document.getElementById('overlay');
 
-const CARD_W = 110;
-const CARD_H = 154;
+// Kaartafmetingen worden dynamisch bepaald door computeLayout()
+let CARD_W = 165;
+let CARD_H = 231;
 
 let activeWrapper = null;
 
-// ── Layout ───────────────────────────────────────
+// ── Bepaal optimale kaartgrootte en rijindeling ──
+// Probeert 1.5× (165×231), schaalt terug als het niet past.
+function computeLayout(n, vw, vh) {
+  const aspect = 110 / 154;
+  for (let w = 165; w >= 88; w = Math.round(w * 0.88)) {
+    const h = Math.round(w / aspect);
+    for (let rows = 2; rows <= 5; rows++) {
+      if (vh < rows * (h + 12)) continue;                 // past niet verticaal
+      if (Math.floor(vw / (w + 12)) * rows >= n) {        // past horizontaal
+        return { w, h, rows };
+      }
+    }
+  }
+  return { w: 110, h: 154, rows: 3 };
+}
+
+// ── Organische rijverdeling (meer kaarten in het midden) ──
+function distributeUneven(total, rows) {
+  if (rows === 1) return [total];
+  const weights = Array.from({ length: rows }, (_, i) => {
+    const pos = rows > 1 ? i / (rows - 1) : 0.5;
+    const bell = Math.sin(pos * Math.PI);                  // piek in het midden
+    return 0.45 + bell * 0.55 + (Math.random() - 0.5) * 0.25;
+  });
+  const wSum   = weights.reduce((a, b) => a + b, 0);
+  const scaled = weights.map(w => (w / wSum) * total);
+  const floors = scaled.map(Math.floor);
+  let rem = total - floors.reduce((a, b) => a + b, 0);
+  scaled.map((v, i) => [v - Math.floor(v), i])
+        .sort(([a], [b]) => b - a)
+        .forEach(([, i]) => { if (rem-- > 0) floors[i]++; });
+  return floors;
+}
+
+// ── Kaartjes over het volledige scherm spreiden ──
 function layoutCards(wrappers) {
+  const n  = wrappers.length;
   const vw = window.innerWidth;
   const vh = window.innerHeight;
 
-  const cols = Math.max(2, Math.floor(vw / (CARD_W * 1.7)));
-  const rows = Math.ceil(wrappers.length / cols);
+  const layout = computeLayout(n, vw, vh);
+  CARD_W = layout.w;
+  CARD_H = layout.h;
 
-  const cellW = vw / cols;
-  const cellH = Math.max(CARD_H + 40, vh / rows);
-
-  grid.style.height = `${Math.max(vh, rows * cellH)}px`;
-
-  wrappers.forEach((wrapper, i) => {
-    const col = i % cols;
-    const row = Math.floor(i / cols);
-    const margin = 12;
-    const maxX = Math.max(0, cellW - CARD_W - margin * 2);
-    const maxY = Math.max(0, cellH - CARD_H - margin * 2);
-
-    const x = col * cellW + margin + Math.random() * maxX;
-    const y = row * cellH + margin + Math.random() * maxY;
-
-    wrapper.style.left = `${x}px`;
-    wrapper.style.top  = `${y}px`;
-    wrapper._absLeft   = x;
-    wrapper._absTop    = y;
+  // Pas kaartgrootte aan in de DOM
+  wrappers.forEach(w => {
+    w.style.width  = `${CARD_W}px`;
+    w.style.height = `${CARD_H}px`;
   });
+
+  const rowCounts = distributeUneven(n, layout.rows);
+  const rowH = vh / layout.rows;
+  let idx = 0;
+
+  rowCounts.forEach((count, rowIdx) => {
+    const rowTop = rowIdx * rowH;
+
+    for (let i = 0; i < count; i++) {
+      const wrapper = wrappers[idx++];
+      if (!wrapper) return;
+
+      // X: verdeel de rij in zones, kaart willekeurig binnen zijn zone
+      const zoneW = vw / count;
+      const minX  = Math.max(2, i * zoneW + 4);
+      const maxX  = Math.min(vw - CARD_W - 2, (i + 1) * zoneW - CARD_W - 4);
+      const x     = minX + Math.random() * Math.max(0, maxX - minX);
+
+      // Y: willekeurig binnen de rijband (beetje speling boven/onder)
+      const pad  = Math.max(4, (rowH - CARD_H) * 0.25);
+      const minY = rowTop + pad;
+      const maxY = Math.min(vh - CARD_H - 2, rowTop + rowH - CARD_H - pad);
+      const y    = minY + Math.random() * Math.max(0, maxY - minY);
+
+      wrapper.style.left = `${x}px`;
+      wrapper.style.top  = `${y}px`;
+      wrapper._absLeft   = x;
+      wrapper._absTop    = y;
+    }
+  });
+
+  grid.style.height = `${vh}px`;
 }
 
 // ── Build cards ──────────────────────────────────
@@ -67,7 +121,7 @@ const wrappers = CARDS.map((card) => {
 });
 
 layoutCards(wrappers);
-window.addEventListener('resize', () => layoutCards(wrappers));
+window.addEventListener('resize', () => { if (!activeWrapper) layoutCards(wrappers); });
 
 // ── Open card ────────────────────────────────────
 // Aanpak: 2-fasen flip op card-inner (geen preserve-3d nodig)
