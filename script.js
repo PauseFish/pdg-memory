@@ -74,10 +74,10 @@ function layoutCards(wrappers) {
       const maxX  = Math.min(vw - CARD_W - 2, (i + 1) * zoneW - CARD_W - 4);
       const x     = minX + Math.random() * Math.max(0, maxX - minX);
 
-      // Y: willekeurig binnen de rijband (beetje speling boven/onder)
-      const pad  = Math.max(4, (rowH - CARD_H) * 0.25);
-      const minY = rowTop + pad;
-      const maxY = Math.min(vh - CARD_H - 2, rowTop + rowH - CARD_H - pad);
+      // Y: band loopt 50% van rowH buiten de rijgrenzen — kaarten uit
+      // verschillende rijen overlappen verticaal voor een organisch effect.
+      const minY = Math.max(2, rowTop - rowH * 0.5);
+      const maxY = Math.min(vh - CARD_H - 2, rowTop + rowH * 1.5 - CARD_H);
       const y    = minY + Math.random() * Math.max(0, maxY - minY);
 
       wrapper.style.left = `${x}px`;
