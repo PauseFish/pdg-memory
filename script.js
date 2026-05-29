@@ -95,7 +95,8 @@ const wrappers = CARDS.map((card) => {
   const wrapper = document.createElement('div');
   wrapper.className = 'card-wrapper';
 
-  const rot = +(Math.random() * 28 - 14).toFixed(2);
+  const angle = +(5 + Math.random() * 20).toFixed(2);      // 5–25 graden
+  const rot   = Math.random() < 0.5 ? angle : -angle;      // links of rechts
   wrapper._rot = rot;
   wrapper.style.transform = `rotate(${rot}deg)`;
 
