@@ -76,8 +76,8 @@ function layoutCards(wrappers) {
 
       // Y: band loopt 50% van rowH buiten de rijgrenzen — kaarten uit
       // verschillende rijen overlappen verticaal voor een organisch effect.
-      const minY = Math.max(2, rowTop - rowH * 0.5);
-      const maxY = Math.min(vh - CARD_H - 2, rowTop + rowH * 1.5 - CARD_H);
+      const minY = Math.max(2, rowTop - rowH * 0.25);
+      const maxY = Math.min(vh - CARD_H - 2, rowTop + rowH * 1.25 - CARD_H);
       const y    = minY + Math.random() * Math.max(0, maxY - minY);
 
       wrapper.style.left = `${x}px`;
