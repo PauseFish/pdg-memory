@@ -129,13 +129,9 @@ window.addEventListener('resize', () => { if (!activeWrapper) layoutCards(wrappe
 //   t=300ms  : fase 1 — card-inner roteert naar de kant (200ms ease-in)
 //   t=500ms  : wissel zijden, fase 2 — roteert terug (200ms ease-out)
 function openCard(wrapper, card) {
-  const rect      = wrapper.getBoundingClientRect();
   const inner     = wrapper.querySelector('.card-inner');
   const frontFace = wrapper.querySelector('.card-front');
   const backFace  = wrapper.querySelector('.card-back-face');
-
-  // Sla viewport-positie op voor terugvlucht
-  wrapper._origViewport = { left: rect.left, top: rect.top };
 
   // Vul achterkant
   backFace.innerHTML = buildContent(card);
@@ -144,14 +140,20 @@ function openCard(wrapper, card) {
     closeCard();
   });
 
-  // Kaart naar fixed op huidige positie (geen zichtbare sprong)
+  // Gebruik _absLeft/_absTop als anker voor fixed, NIET getBoundingClientRect().
+  // getBoundingClientRect() geeft de bounding box van het geroteerde element,
+  // die afwijkt van de CSS left/top — dat veroorzaakt een positiesprong.
+  const gridRect = grid.getBoundingClientRect();
+  const fLeft = wrapper._absLeft + gridRect.left;
+  const fTop  = wrapper._absTop  + gridRect.top;
+
   inner.style.transition = 'none';
   inner.style.transform  = '';
   wrapper.classList.add('is-active');
   Object.assign(wrapper.style, {
     position:   'fixed',
-    left:       `${rect.left}px`,
-    top:        `${rect.top}px`,
+    left:       `${fLeft}px`,
+    top:        `${fTop}px`,
     width:      `${CARD_W}px`,
     height:     `${CARD_H}px`,
     zIndex:     '200',
@@ -236,16 +238,19 @@ function closeCard() {
       inner.style.transform  = 'rotateY(0deg)';
     });
 
-    // Vlieg terug naar originele positie
-    const { left, top } = wrapper._origViewport;
-    const ease = 'cubic-bezier(.4,0,.2,1)';
+    // Vlieg terug: gebruik hetzelfde gridRect-anker als bij openen,
+    // zodat de eindpositie van fixed exact overeenkomt met de absolute positie.
+    const gridRect = grid.getBoundingClientRect();
+    const fLeft = wrapper._absLeft + gridRect.left;
+    const fTop  = wrapper._absTop  + gridRect.top;
+    const ease  = 'cubic-bezier(.4,0,.2,1)';
     wrapper.style.transition = [
       `left .45s ${ease}`, `top .45s ${ease}`,
       `width .45s ${ease}`, `height .45s ${ease}`,
       `transform .45s ${ease}`,
     ].join(',');
-    wrapper.style.left      = `${left}px`;
-    wrapper.style.top       = `${top}px`;
+    wrapper.style.left      = `${fLeft}px`;
+    wrapper.style.top       = `${fTop}px`;
     wrapper.style.width     = `${CARD_W}px`;
     wrapper.style.height    = `${CARD_H}px`;
     wrapper.style.transform = `rotate(${wrapper._rot}deg)`;
