@@ -305,7 +305,7 @@ function buildContent(card) {
     return `${btn}<p class="card-text">${escapeHtml(card.question)}</p>`;
   }
   if (card.type === 'video') {
-    const src = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(card.videoId)}?autoplay=1`;
+    const src = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(card.videoId)}?autoplay=1&controls=0&disablekb=1`;
     return `${btn}
       <div class="card-video-wrapper">
         <iframe src="${src}"
