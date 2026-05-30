@@ -1,54 +1,30 @@
 // Voeg hier je eigen kaartjes toe.
 // type: "question"  → geef een "question" tekst
-// type: "video"     → geef een YouTube "videoId" (het deel na ?v= in de URL)
+// type: "video"     → geef een YouTube "videoId" (het deel na /shorts/ of ?v= in de URL)
 
 const CARDS = [
-  {
-    type: "question",
-    question: "Wat is de hoofdstad van Nederland?"
-  },
-  {
-    type: "question",
-    question: "Hoeveel provincies heeft Nederland?"
-  },
-  {
-    type: "video",
-    videoId: "dQw4w9WgXcQ"
-  },
-  {
-    type: "question",
-    question: "Welke rivier stroomt door Amsterdam?"
-  },
-  {
-    type: "question",
-    question: "In welk jaar werd Nederland lid van de EU?"
-  },
-  {
-    type: "video",
-    videoId: "3JZ_D3ELwOQ"
-  },
-  {
-    type: "question",
-    question: "Welke kleur heeft de Nederlandse vlag?"
-  },
-  {
-    type: "question",
-    question: "Wat is de langste rivier van Nederland?"
-  },
-  {
-    type: "question",
-    question: "Welk land grenst ten zuiden aan Nederland?"
-  },
-  {
-    type: "video",
-    videoId: "oHg5SJYRHA0"
-  },
-  {
-    type: "question",
-    question: "Wat is de munteenheid van Nederland?"
-  },
-  {
-    type: "question",
-    question: "Welk nationaal symbool hoort bij Nederland?"
-  }
+  { type: "question", question: "LessonUp N*gg*r" },
+  { type: "video",    videoId: "dCheIX3rx7M" },
+  { type: "question", question: "Zo gaan we niet het weekend in…" },
+  { type: "video",    videoId: "bNb3F_p7ZMo" },
+  { type: "question", question: "Ze waren allemaal keihard bezig!" },
+  { type: "video",    videoId: "BQ7oYeUx0JU" },
+  { type: "question", question: "Diabetes Type 1" },
+  { type: "video",    videoId: "Hv3cJriNLWo" },
+  { type: "question", question: "Huilen na de les" },
+  { type: "video",    videoId: "eg8WQDC22BU" },
+  { type: "question", question: "Maar ik vind dat eigenlijk helemaal niet grappig" },
+  { type: "video",    videoId: "_sp73lhbszw" },
+  { type: "question", question: "Hij liep zo de les in en schold mij uit!" },
+  { type: "video",    videoId: "M7mj1vWQ-rA" },
+  { type: "question", question: "Je moet boos doen voordat je het bent" },
+  { type: "video",    videoId: "T6xFbTj-VbU" },
+  { type: "question", question: "Maak je geen zorgen…" },
+  { type: "video",    videoId: "w9dKkp9nWiQ" },
+  { type: "question", question: "Didagogisch handelen" },
+  { type: "video",    videoId: "1-R4OSHAKC0" },
+  { type: "question", question: "Overerven" },
+  { type: "video",    videoId: "olVfDLb2xHY" },
+  { type: "question", question: "Roze ballen en gele dobbelstenen" },
+  { type: "video",    videoId: "LrZr9r2jFqk" }
 ];
