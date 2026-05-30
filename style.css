@@ -199,11 +199,17 @@ body {
   inset: 0;
   z-index: 1;
   background: #000;
+  overflow: hidden; /* knipt de YouTube-UI buiten het zichtbare vlak */
 }
 
 .card-video-wrapper iframe {
+  /* 12% groter aan voor- en achterkant: YouTube-titelbalk (boven)
+     en logo/knop (onder) verdwijnen buiten de container */
+  position: absolute;
+  top: -12%;
+  left: 0;
   width: 100%;
-  height: 100%;
+  height: 124%;
   border: none;
   display: block;
 }
