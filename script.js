@@ -165,12 +165,28 @@ function openCard(wrapper, card) {
   overlay.classList.add('active');
   activeWrapper = wrapper;
 
-  // Doelafmetingen
-  const isVideo = card.type === 'video';
+  // Doelafmetingen — altijd portret
   const vw = window.innerWidth;
   const vh = window.innerHeight;
-  const targetW = Math.min(isVideo ? 520 : 440, vw * 0.88);
-  const targetH = isVideo ? Math.round(targetW * 9 / 16) : Math.min(300, vh * 0.62);
+  let targetW, targetH;
+
+  if (card.type === 'video') {
+    // YouTube Shorts zijn 9:16 portret
+    targetH = Math.min(vh * 0.82, 600);
+    targetW = Math.round(targetH * 9 / 16);
+    if (targetW > vw * 0.88) {
+      targetW = Math.round(vw * 0.88);
+      targetH = Math.round(targetW * 16 / 9);
+    }
+  } else {
+    // Tekst: kaartverhouding 110:154
+    targetH = Math.min(vh * 0.72, 500);
+    targetW = Math.round(targetH * (110 / 154));
+    if (targetW > vw * 0.88) {
+      targetW = Math.round(vw * 0.88);
+      targetH = Math.round(targetW * (154 / 110));
+    }
+  }
 
   // Vlieg naar midden
   requestAnimationFrame(() => requestAnimationFrame(() => {
