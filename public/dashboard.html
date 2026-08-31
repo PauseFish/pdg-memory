@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PDG Memory — Beheer</title>
+  <link rel="stylesheet" href="dashboard.css" />
+</head>
+<body>
+  <main class="wrap">
+    <h1>PDG Memory — Beheer</h1>
+
+    <section id="login-section">
+      <form id="login-form">
+        <label>Gebruikersnaam
+          <input type="text" id="login-username" autocomplete="username" required />
+        </label>
+        <label>Wachtwoord
+          <input type="password" id="login-password" autocomplete="current-password" required />
+        </label>
+        <button type="submit">Inloggen</button>
+        <p id="login-error" class="error" hidden></p>
+      </form>
+    </section>
+
+    <section id="admin-section" hidden>
+      <div class="admin-header">
+        <a href="index.html">← Terug naar het spel</a>
+        <button id="logout-btn" class="secondary">Uitloggen</button>
+      </div>
+
+      <form id="add-form">
+        <h2>Nieuw kaartje toevoegen</h2>
+        <label>Type
+          <select id="add-type">
+            <option value="question">Vraag / stelling</option>
+            <option value="video">YouTube video</option>
+          </select>
+        </label>
+        <label id="question-field">Vraag
+          <textarea id="add-question" rows="2" placeholder="Bijvoorbeeld: Overerven"></textarea>
+        </label>
+        <label id="video-field" hidden>YouTube video-ID
+          <input type="text" id="add-videoid" placeholder="Het deel na /shorts/ of ?v= in de URL, bv. dCheIX3rx7M" />
+        </label>
+        <button type="submit">Toevoegen</button>
+        <p id="add-error" class="error" hidden></p>
+      </form>
+
+      <h2>Bestaande kaartjes (<span id="item-count">0</span>)</h2>
+      <ul id="item-list"></ul>
+    </section>
+  </main>
+
+  <script src="dashboard.js"></script>
+</body>
+</html>

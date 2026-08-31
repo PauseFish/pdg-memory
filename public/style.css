@@ -221,3 +221,28 @@ body {
 #overlay.active {
   display: block;
 }
+
+/* ── Beheer-link ───────────────────────────────── */
+
+#admin-link {
+  position: fixed;
+  bottom: 12px;
+  right: 12px;
+  z-index: 50;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.25);
+  color: rgba(255,255,255,0.55);
+  text-decoration: none;
+  font-size: 1rem;
+  transition: background 0.15s, color 0.15s;
+}
+
+#admin-link:hover {
+  background: rgba(0,0,0,0.45);
+  color: #fff;
+}

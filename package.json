@@ -1,0 +1,17 @@
+{
+  "name": "pdg-memory",
+  "version": "1.0.0",
+  "private": true,
+  "description": "PDG Memory kaartjesspel met een beheerdashboard voor het toevoegen van items",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "hash-password": "node scripts/hash-password.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-session": "^1.18.0"
+  }
+}

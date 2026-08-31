@@ -90,39 +90,57 @@ function layoutCards(wrappers) {
   grid.style.height = `${vh}px`;
 }
 
-// ── Build cards ──────────────────────────────────
-const wrappers = CARDS.map((card) => {
-  const wrapper = document.createElement('div');
-  wrapper.className = 'card-wrapper';
+// ── Build cards (opgehaald bij de backend) ───────
+let wrappers = [];
 
-  const angle = +(5 + Math.random() * 20).toFixed(2);      // 5–25 graden
-  const rot   = Math.random() < 0.5 ? angle : -angle;      // links of rechts
-  wrapper._rot = rot;
-  wrapper.style.transform = `rotate(${rot}deg)`;
+function buildCards(cards) {
+  wrappers = cards.map((card) => {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'card-wrapper';
 
-  wrapper.innerHTML = `
-    <div class="card-inner">
-      <div class="card-front">
-        <span class="cf-corner cf-tl">PDG</span>
-        <div class="cf-oval">
-          <span class="cf-label">PDG<em>memories</em></span>
+    const angle = +(5 + Math.random() * 20).toFixed(2);      // 5–25 graden
+    const rot   = Math.random() < 0.5 ? angle : -angle;      // links of rechts
+    wrapper._rot = rot;
+    wrapper.style.transform = `rotate(${rot}deg)`;
+
+    wrapper.innerHTML = `
+      <div class="card-inner">
+        <div class="card-front">
+          <span class="cf-corner cf-tl">PDG</span>
+          <div class="cf-oval">
+            <span class="cf-label">PDG<em>memories</em></span>
+          </div>
+          <span class="cf-corner cf-br">PDG</span>
         </div>
-        <span class="cf-corner cf-br">PDG</span>
+        <div class="card-back-face"></div>
       </div>
-      <div class="card-back-face"></div>
-    </div>
-  `;
+    `;
 
-  wrapper.addEventListener('click', () => {
-    if (!activeWrapper) openCard(wrapper, card);
+    wrapper.addEventListener('click', () => {
+      if (!activeWrapper) openCard(wrapper, card);
+    });
+
+    grid.appendChild(wrapper);
+    return wrapper;
   });
 
-  grid.appendChild(wrapper);
-  return wrapper;
-});
+  layoutCards(wrappers);
+}
 
-layoutCards(wrappers);
-window.addEventListener('resize', () => { if (!activeWrapper) layoutCards(wrappers); });
+async function loadCards() {
+  try {
+    const res = await fetch('/api/cards');
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    buildCards(await res.json());
+  } catch (err) {
+    grid.innerHTML = '<p style="color:#fff;text-align:center;margin-top:40vh;font-family:sans-serif;">Kon kaartjes niet laden.</p>';
+    console.error('Kaartjes laden mislukt:', err);
+  }
+}
+
+window.addEventListener('resize', () => { if (!activeWrapper && wrappers.length) layoutCards(wrappers); });
+
+loadCards();
 
 // ── Open card ────────────────────────────────────
 // Aanpak: 2-fasen flip op card-inner (geen preserve-3d nodig)
